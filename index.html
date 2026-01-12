@@ -5,505 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KO REMASTER // COMMAND CENTER</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg:#07070a;
-      --panel: rgba(22,22,26,.72);
-      --stroke:#26262d;
-      --stroke2:#34343d;
-      --txt:#e8e8ee;
-      --muted:#a1a1aa;
-
-      --blue:#3b82f6;
-      --red:#ef4444;
-      --amber:#f59e0b;
-      --green:#10b981;
-      --violet:#8b5cf6;
-
-      --glass: blur(14px);
-      --shadow: 0 14px 60px rgba(0,0,0,.35);
-      --radius: 14px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; padding:18px;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--txt);
-      background:
-        radial-gradient(circle at 18% 30%, rgba(59,130,246,.11), transparent 35%),
-        radial-gradient(circle at 80% 22%, rgba(239,68,68,.09), transparent 35%),
-        radial-gradient(circle at 60% 90%, rgba(139,92,246,.09), transparent 35%),
-        var(--bg);
-      display:flex; flex-direction:column; align-items:center;
-      overflow:hidden;
-    }
-
-    .topbar{
-      width:100%; max-width:1700px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 16px;
-      background:var(--panel);
-      border:1px solid var(--stroke);
-      border-radius:var(--radius);
-      backdrop-filter: var(--glass);
-      box-shadow: var(--shadow);
-      gap:12px;
-      flex:0 0 auto;
-    }
-
-    .brand{
-      display:flex; flex-direction:column; gap:4px;
-      min-width: 320px;
-    }
-    .brand h1{
-      margin:0; font-size:18px; font-weight:900; letter-spacing:-.2px;
-      background: linear-gradient(90deg,#fff,#c8c8d4,#8f8fa3);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-    .brand .sub{
-      font-family: "JetBrains Mono", monospace;
-      font-size:12px; color: var(--muted);
-      opacity:.95;
-    }
-
-    .statusLine{
-      display:flex; flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      justify-content:flex-end;
-      flex: 1 1 auto;
-    }
-
-    .chip{
-      display:flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-      border-radius: 999px;
-      font-size:12px;
-      color:var(--muted);
-      backdrop-filter: var(--glass);
-      white-space:nowrap;
-    }
-    .dot{width:8px;height:8px;border-radius:99px;background:var(--green); box-shadow:0 0 0 3px rgba(16,185,129,.15)}
-    .dot.red{background:var(--red); box-shadow:0 0 0 3px rgba(239,68,68,.15)}
-    .dot.amber{background:var(--amber); box-shadow:0 0 0 3px rgba(245,158,11,.16)}
-    .mono{font-family:"JetBrains Mono",monospace}
-    .chip strong{color:var(--txt); font-weight:900}
-
-    .btn{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.02);
-      color:var(--txt);
-      padding:9px 12px;
-      border-radius: 10px;
-      font-weight:800;
-      font-size:12px;
-      cursor:pointer;
-      transition:.18s ease;
-      display:inline-flex; align-items:center; gap:8px;
-    }
-    .btn:hover{border-color: var(--stroke2); background: rgba(255,255,255,.04)}
-    .btn.primary{background: rgba(59,130,246,.18); border-color: rgba(59,130,246,.35)}
-    .btn.good{background: rgba(16,185,129,.16); border-color: rgba(16,185,129,.35)}
-    .btn.danger{background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.32)}
-
-    .container{
-      width:100%; max-width:1700px;
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 370px 1fr 420px;
-      gap:14px;
-      height: calc(100vh - 18px - 74px - 14px);
-      flex: 1 1 auto;
-      min-height: 520px;
-    }
-
-    .panel{
-      background: var(--panel);
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      backdrop-filter: var(--glass);
-      box-shadow: var(--shadow);
-      display:flex; flex-direction:column;
-      overflow:hidden;
-      min-height: 0;
-    }
-
-    .panel-header{
-      padding:12px 14px;
-      border-bottom: 1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-
-    .panel-title{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    .panel-title strong{
-      font-size:12px; letter-spacing:1px; text-transform:uppercase;
-      color: var(--muted);
-      font-weight:900;
-    }
-    .panel-title span{
-      font-size:12px; color: rgba(232,232,238,.92);
-      opacity:.9;
-    }
-
-    .panel-body{padding:12px 14px; min-height:0; overflow:auto}
-    .panel-body.slim{padding:10px 12px}
-
-    .note{
-      width:100%;
-      height: 210px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      padding:12px;
-      outline:none;
-      resize: vertical;
-      font-size:13px;
-      line-height:1.55;
-      color:var(--txt);
-      font-family: Inter, system-ui, -apple-system;
-    }
-    .note::placeholder{color:#52525b}
-
-    .section{
-      margin-top:12px;
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      overflow:hidden;
-      background: rgba(255,255,255,.02);
-    }
-    .section .section-head{
-      padding:10px 12px;
-      border-bottom:1px solid var(--stroke);
-      display:flex; align-items:center; justify-content:space-between;
-      background: rgba(255,255,255,.02);
-    }
-    .section .section-head b{
-      font-size:12px; text-transform:uppercase; letter-spacing:1px;
-      color: var(--muted);
-      font-weight:900;
-    }
-    .section .section-body{padding:10px 12px}
-    .hint{font-size:12px; color: var(--muted); line-height:1.35}
-
-    /* Center */
-    .toolbar{
-      display:flex; gap:10px; flex-wrap:wrap;
-      padding:12px 14px;
-      border-bottom:1px solid var(--stroke);
-      background: rgba(0,0,0,.18);
-    }
-    .field{
-      display:flex; flex-direction:column; gap:6px;
-      min-width: 180px;
-      flex: 1 1 auto;
-    }
-    .field label{
-      font-size:11px;
-      color: var(--muted);
-      text-transform:uppercase;
-      letter-spacing:1px;
-      font-weight:900;
-    }
-    .field input,.field select{
-      background: rgba(0,0,0,.28);
-      border:1px solid var(--stroke);
-      border-radius: 10px;
-      padding:10px 10px;
-      outline:none;
-      font-size:13px;
-      color:var(--txt);
-    }
-
-    .kanban{
-      padding:12px 14px;
-      min-height:0;
-      overflow:auto;
-      display:grid;
-      grid-template-columns: repeat(3, minmax(260px,1fr));
-      gap:12px;
-    }
-
-    .col{
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      background: rgba(255,255,255,.02);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      min-height: 0;
-    }
-    .col-head{
-      padding:10px 12px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-    }
-    .col-head b{
-      font-size:12px;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      color: var(--muted);
-      font-weight:900;
-    }
-    .count{
-      font-family:"JetBrains Mono",monospace;
-      font-size:12px;
-      color: var(--muted);
-      padding:3px 8px;
-      border:1px solid var(--stroke);
-      border-radius: 999px;
-      background: rgba(0,0,0,.18);
-    }
-
-    .cards{
-      padding:10px;
-      overflow:auto;
-      min-height: 0;
-      display:flex; flex-direction:column; gap:10px;
-    }
-
-    .card{
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.22);
-      border-radius: 14px;
-      padding:10px;
-      display:flex; flex-direction:column; gap:8px;
-      cursor:pointer;
-      transition:.16s ease;
-    }
-    .card:hover{border-color: var(--stroke2); transform: translateY(-1px)}
-    .card-top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    }
-    .card-title{
-      font-weight:900;
-      font-size:13px;
-      line-height:1.25;
-    }
-    .tagrow{display:flex; gap:6px; flex-wrap:wrap}
-    .tag{
-      font-size:11px;
-      font-family:"JetBrains Mono",monospace;
-      padding:2px 7px;
-      border-radius: 999px;
-      border:1px solid;
-      opacity:.95;
-    }
-    .tag.blocker{border-color: rgba(239,68,68,.55); color: var(--red); background: rgba(239,68,68,.12)}
-    .tag.high{border-color: rgba(245,158,11,.55); color: var(--amber); background: rgba(245,158,11,.12)}
-    .tag.normal{border-color: rgba(59,130,246,.55); color: var(--blue); background: rgba(59,130,246,.12)}
-    .tag.done{border-color: rgba(16,185,129,.55); color: var(--green); background: rgba(16,185,129,.12)}
-    .tag.subsys{border-color: rgba(139,92,246,.55); color: var(--violet); background: rgba(139,92,246,.12)}
-
-    .mini{
-      font-size:12px; color: var(--muted);
-      line-height:1.35;
-    }
-
-    .bar{
-      height:8px;
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--stroke);
-      border-radius: 999px;
-      overflow:hidden;
-    }
-    .bar > i{
-      display:block; height:100%;
-      width: 0%;
-      background: linear-gradient(90deg, rgba(59,130,246,.95), rgba(16,185,129,.95));
-      border-radius: 999px;
-    }
-
-    /* Right */
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .stat{
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      background: rgba(0,0,0,.20);
-      padding:10px;
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .stat .k{font-size:11px; text-transform:uppercase; letter-spacing:1px; color: var(--muted); font-weight:900}
-    .stat .v{font-size:18px; font-weight:950; letter-spacing:-.3px}
-    .stat .s{font-size:12px; color: var(--muted); font-family:"JetBrains Mono",monospace}
-
-    .donutWrap{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      border:1px solid var(--stroke);
-      background: rgba(0,0,0,.20);
-      border-radius: 14px;
-      padding:10px;
-      margin-top:10px;
-    }
-    .donut{
-      width:86px; height:86px; border-radius: 50%;
-      background: conic-gradient(var(--green) 0deg, rgba(255,255,255,.08) 0deg);
-      display:grid; place-items:center;
-      border:1px solid var(--stroke);
-    }
-    .donut .in{
-      width:66px; height:66px; border-radius:50%;
-      background: rgba(0,0,0,.50);
-      border:1px solid var(--stroke);
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:2px;
-    }
-    .donut .in b{font-size:16px}
-    .donut .in span{font-size:10px; color: var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:900}
-
-    .legend{display:flex; flex-direction:column; gap:6px; flex:1;}
-    .leg{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; color: var(--muted);}
-    .leg i{width:10px;height:10px;border-radius:99px;background:var(--blue); display:inline-block; margin-right:8px; box-shadow:0 0 0 3px rgba(59,130,246,.12);}
-    .leg .r i{background:var(--red); box-shadow:0 0 0 3px rgba(239,68,68,.12)}
-    .leg .a i{background:var(--amber); box-shadow:0 0 0 3px rgba(245,158,11,.12)}
-    .leg .g i{background:var(--green); box-shadow:0 0 0 3px rgba(16,185,129,.12)}
-
-    .timeline{
-      margin-top:10px;
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      background: rgba(0,0,0,.20);
-      overflow:hidden;
-    }
-    .timeline .tHead{
-      padding:10px 12px;
-      border-bottom:1px solid var(--stroke);
-      display:flex; align-items:center; justify-content:space-between;
-      background: rgba(255,255,255,.03);
-    }
-    .timeline .tHead b{
-      font-size:12px; letter-spacing:1px; text-transform:uppercase; color: var(--muted);
-      font-weight:900;
-    }
-    .events{
-      max-height: 220px;
-      overflow:auto;
-      padding:10px 12px;
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .ev{display:flex; gap:10px; align-items:flex-start;}
-    .ev .ball{
-      width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.15);
-      margin-top:4px; flex:0 0 auto;
-      border:1px solid var(--stroke);
-    }
-    .ev .txt{font-size:12px; line-height:1.35; color: var(--muted)}
-    .ev .txt b{color: var(--txt)}
-    .ev .when{font-family:"JetBrains Mono",monospace; font-size:11px; color:#777; margin-top:2px}
-
-    /* Modal */
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.62);
-      display:none;
-      align-items:center; justify-content:center;
-      padding: 18px;
-      z-index:50;
-    }
-    .modal{
-      width:min(980px, 100%);
-      max-height: min(86vh, 900px);
-      background: rgba(18,18,22,.82);
-      border:1px solid var(--stroke2);
-      border-radius: 18px;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 20px 90px rgba(0,0,0,.55);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-    }
-    .modalHead{
-      padding:12px 14px;
-      border-bottom:1px solid var(--stroke);
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      background: rgba(255,255,255,.03);
-    }
-    .modalHead b{font-size:13px; letter-spacing:1px; text-transform:uppercase; color: var(--muted); font-weight:900}
-    .modalBody{
-      padding:12px 14px;
-      overflow:auto;
-      display:grid;
-      grid-template-columns: 1.4fr .8fr;
-      gap:12px;
-      min-height:0;
-    }
-    .box{
-      border:1px solid var(--stroke);
-      border-radius: 14px;
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-    }
-    .box .bh{
-      padding:10px 12px;
-      border-bottom:1px solid var(--stroke);
-      display:flex; align-items:center; justify-content:space-between;
-      background: rgba(255,255,255,.03);
-    }
-    .box .bh b{font-size:12px; letter-spacing:1px; text-transform:uppercase; color: var(--muted); font-weight:900}
-    .box .bb{padding:10px 12px; display:flex; flex-direction:column; gap:10px}
-
-    .row2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
-
-    .inpt, .sel, .ta{
-      width:100%;
-      background: rgba(0,0,0,.24);
-      border:1px solid var(--stroke);
-      border-radius: 10px;
-      padding:10px;
-      outline:none;
-      font-size:13px;
-      color:var(--txt);
-      font-family: Inter, system-ui, -apple-system;
-    }
-    .ta{min-height: 110px; resize: vertical; font-family:"JetBrains Mono",monospace; font-size:12px; line-height:1.55}
-
-    ::-webkit-scrollbar{width:8px; height:8px}
-    ::-webkit-scrollbar-track{background: rgba(0,0,0,.25)}
-    ::-webkit-scrollbar-thumb{background: rgba(255,255,255,.14); border-radius: 10px}
-    ::-webkit-scrollbar-thumb:hover{background: rgba(255,255,255,.20)}
-
-    @media (max-width: 1220px){
-      body{overflow:auto}
-      .container{grid-template-columns: 1fr; height:auto; min-height: unset}
-      .panel{min-height: 520px}
-      .kanban{grid-template-columns: 1fr}
-      .modalBody{grid-template-columns: 1fr}
-      .brand{min-width:unset}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="supabase.js"></script>
 </head>
 
 <body>
   <div class="topbar">
     <div class="brand">
       <h1>KO REMASTER <span class="mono" style="font-weight:900; opacity:.75"> // COMMAND CENTER</span></h1>
-      <div class="sub">Durum: <span class="mono" id="statusText">—</span></div>
+      <div class="sub"><span data-lang="status_label">Durum:</span> <span class="mono" id="statusText">—</span></div>
     </div>
 
     <div class="statusLine">
       <div class="chip"><span class="dot" id="healthDot"></span><span><strong id="healthLabel">STABLE</strong> <span class="mono" style="opacity:.9" id="healthDetail">—</span></span></div>
-      <div class="chip">Active: <strong class="mono" id="sActive">0</strong></div>
-      <div class="chip">Done: <strong class="mono" id="sDone">0</strong></div>
-      <div class="chip">Critical: <strong class="mono" id="sCrit">0</strong></div>
-      <div class="chip">Son Kayıt: <strong class="mono" id="sSave">—</strong></div>
+      <div class="chip"><span data-lang="lbl_active">Active:</span> <strong class="mono" id="sActive">0</strong></div>
+      <div class="chip"><span data-lang="lbl_done">Done:</span> <strong class="mono" id="sDone">0</strong></div>
+      <div class="chip"><span data-lang="lbl_crit">Critical:</span> <strong class="mono" id="sCrit">0</strong></div>
+      <div class="chip"><span data-lang="lbl_last_save">Son Kayıt:</span> <strong class="mono" id="sSave">—</strong></div>
 
-      <button class="btn primary" onclick="openCreate()">＋ Yeni Task</button>
-      <button class="btn" onclick="downloadBackup()">⤓ JSON</button>
-      <button class="btn" onclick="triggerImport()">⤒ Import</button>
-      <button class="btn good" onclick="manualSave()">💾 Kaydet</button>
-      <button class="btn danger" onclick="hardReset()">🧨 Sıfırla</button>
+      <button class="btn primary" onclick="openCreate()" data-lang="btn_new">＋ YENİ EKLE</button>
+      <button class="btn" onclick="downloadBackup()" data-lang="btn_json">⤓ JSON</button>
+      <button class="btn" onclick="triggerImport()" data-lang="btn_import">⤒ Import</button>
+      <button class="btn good" onclick="manualSave()" data-lang="btn_save">💾 Kaydet</button>
+      <button class="btn danger" onclick="hardReset()" data-lang="btn_reset">🧨 Sıfırla</button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn" title="Tema Değiştir">☀</button>
+      <button class="btn" onclick="toggleLang()" id="langBtn" style="min-width:36px; justify-content:center">TR</button>
 
       <input type="file" id="importFile" accept="application/json" style="display:none" />
     </div>
@@ -515,8 +41,8 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">
-          <strong>👤 PRIVATE: ERENCAN</strong>
-          <span>Notlar / snippet / günlük / commit referansları</span>
+          <strong data-lang="p_private_eren">👤 PRIVATE: ERENCAN</strong>
+          <span data-lang="p_private_eren_sub">Notlar / snippet / günlük</span>
         </div>
         <span class="chip"><span class="dot" style="background:var(--blue); box-shadow:0 0 0 3px rgba(59,130,246,.14)"></span><span class="mono">LOCAL</span></span>
       </div>
@@ -524,10 +50,26 @@
       <div class="panel-body">
         <textarea id="noteErencan" class="note" placeholder="// Burası senin alanın.\n// Bug notları, SQL, C++ snippet, ToDo, commit mesajları...\n// (Auto-save açık)"></textarea>
 
+        <!-- GITHUB INTEGRATION -->
+        <div class="section" id="gitSection" style="margin-top:12px; border-color:rgba(255,255,255,.15)">
+          <div class="section-head" style="background:rgba(255,255,255,.04)">
+            <b style="display:flex; align-items:center; gap:6px"><span data-lang="sec_git">GITHUB</span> <span class="mono" style="opacity:.5; font-size:10px" id="repoLabel"></span></b>
+            <div style="display:flex; gap:4px; align-items:center">
+              <div id="gitLed" style="width:8px; height:8px; border-radius:50%; background:#444; margin-right:4px; transition:0.3s; box-shadow:0 0 0 1px rgba(255,255,255,.1)"></div>
+              <span id="gitLastTime" class="mono" style="font-size:9px; color:var(--txt-muted); margin-right:2px"></span>
+              <button class="btn" style="padding:2px 6px; font-size:10px; height:auto" title="Git Durumunu Kontrol Et" onclick="fetchGitCommits()">📡 Check</button>
+              <button class="btn" style="padding:2px 6px; font-size:10px; height:auto" onclick="fetchGitCommits()">↻</button>
+            </div>
+          </div>
+          <div class="section-body" id="gitList" style="max-height:180px; overflow:auto; display:flex; flex-direction:column; gap:8px">
+            <div class="mini" style="opacity:.5">Repo ayarı yapılmadı...</div>
+          </div>
+        </div>
+
         <div class="section">
           <div class="section-head">
-            <b>Task Yazma Formatı</b>
-            <span class="mono" style="color:var(--muted); font-size:12px">net & anlaşılır</span>
+            <b data-lang="sec_format">Task Yazma Formatı</b>
+            <span class="mono" style="color:var(--txt-muted); font-size:12px" data-lang="sec_format_sub">net & anlaşılır</span>
           </div>
           <div class="section-body">
             <div class="hint">
@@ -541,8 +83,8 @@
 
         <div class="section">
           <div class="section-head">
-            <b>👨‍🏫 PRIVATE: TAYFUN HOCA</b>
-            <span class="mono" style="color:var(--amber)">MENTOR MODE</span>
+            <b data-lang="sec_mentor">👨‍🏫 PRIVATE: TAYFUN HOCA</b>
+            <span class="mono" style="color:var(--c-amber)">MENTOR MODE</span>
           </div>
           <div class="section-body">
             <textarea id="noteTayfun" class="note" style="height:180px" placeholder="// Hoca notları.\n// Engine kararları, entity mapping, network authority, vb."></textarea>
@@ -556,10 +98,13 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">
-          <strong>📋 GÖREV YÖNETİMİ & HATA TAKİBİ</strong>
+          <strong data-lang="p_tasks">📋 GÖREV YÖNETİMİ</strong>
           <span class="mono" id="activeInfo">—</span>
         </div>
-        <span class="chip"><span class="dot amber"></span><span class="mono" id="nowTime">—</span></span>
+        <div style="display:flex; gap:10px; align-items:center">
+          <button class="btn primary" onclick="openCreate()" style="padding:6px 12px; font-size:11px" data-lang="btn_new">＋ YENİ EKLE</button>
+          <span class="chip"><span class="dot amber"></span><span class="mono" id="nowTime">—</span></span>
+        </div>
       </div>
 
       <div class="toolbar">
@@ -596,6 +141,14 @@
           </select>
         </div>
 
+        <div class="field" style="min-width:auto; flex:0 0 auto">
+          <label>View</label>
+          <label style="display:flex; align-items:center; gap:8px; height:38px; padding:0 10px; background:var(--bg-input-dark); border:1px solid var(--border-base); border-radius:10px; cursor:pointer">
+            <input type="checkbox" id="fHideDone" style="accent-color:var(--c-blue); width:14px; height:14px">
+            <span style="font-size:12px; font-weight:500">Hide Done</span>
+          </label>
+        </div>
+
         <div class="field" style="min-width:180px;">
           <label>Sort</label>
           <select id="sortBy">
@@ -605,23 +158,21 @@
             <option value="created">Oluşturma</option>
           </select>
         </div>
-
-        <button class="btn primary" onclick="openCreate()">＋</button>
       </div>
 
       <div class="kanban">
         <div class="col">
-          <div class="col-head"><b>To Do</b><span class="count" id="cTodo">0</span></div>
+          <div class="col-head"><b data-lang="col_todo">Yapılacak</b><span class="count" id="cTodo">0</span></div>
           <div class="cards" id="todo"></div>
         </div>
 
         <div class="col">
-          <div class="col-head"><b>In Progress</b><span class="count" id="cDoing">0</span></div>
+          <div class="col-head"><b data-lang="col_doing">Sürüyor</b><span class="count" id="cDoing">0</span></div>
           <div class="cards" id="doing"></div>
         </div>
 
         <div class="col">
-          <div class="col-head"><b>Done</b><span class="count" id="cDone">0</span></div>
+          <div class="col-head"><b data-lang="col_done">Bitti</b><span class="count" id="cDone">0</span></div>
           <div class="cards" id="done"></div>
         </div>
       </div>
@@ -631,35 +182,15 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">
-          <strong>📈 BİTME GRAFİĞİ</strong>
-          <span>Ortalama ilerleme + dağılım</span>
+          <strong data-lang="p_stats">📈 BİTME GRAFİĞİ</strong>
+          <span data-lang="p_stats_sub">Ortalama ilerleme + dağılım</span>
         </div>
         <button class="btn" onclick="recalc()">↻ Yenile</button>
       </div>
 
       <div class="panel-body slim">
-        <div class="grid2">
-          <div class="stat">
-            <div class="k">Overall Progress</div>
-            <div class="v" id="overallPct">0%</div>
-            <div class="s" id="overallHint">—</div>
-          </div>
-          <div class="stat">
-            <div class="k">Active / Total</div>
-            <div class="v"><span id="activeCount">0</span>/<span id="totalCount">0</span></div>
-            <div class="s" id="blockerHint">—</div>
-          </div>
-          <div class="stat">
-            <div class="k">Critical</div>
-            <div class="v" style="color:var(--red)" id="critCount">0</div>
-            <div class="s">Açık CRITICAL task</div>
-          </div>
-          <div class="stat">
-            <div class="k">Velocity</div>
-            <div class="v" id="velocity">—</div>
-            <div class="s">Son 7 gün done</div>
-          </div>
-        </div>
+        <!-- NEW COMPACT METRICS (JS Generated) -->
+        <div id="keyMetrics"></div>
 
         <div class="donutWrap">
           <div class="donut" id="donut">
@@ -678,7 +209,7 @@
 
         <div class="timeline">
           <div class="tHead">
-            <b>Değişiklik Akışı</b>
+            <b data-lang="st_timeline">Değişiklik Akışı</b>
             <span class="mono" id="logCount">0 event</span>
           </div>
           <div class="events" id="events"></div>
@@ -686,8 +217,8 @@
 
         <div class="section" style="margin-top:10px">
           <div class="section-head">
-            <b>Subsystem Progress</b>
-            <span class="mono" style="color:var(--muted)">auto</span>
+            <b data-lang="sec_subsys">Subsystem Progress</b>
+            <span class="mono" style="color:var(--txt-muted)">auto</span>
           </div>
           <div class="section-body" id="subsysBars"></div>
         </div>
@@ -700,7 +231,7 @@
   <div class="modalBack" id="modalBack" onclick="closeModal(event)">
     <div class="modal" onclick="event.stopPropagation()">
       <div class="modalHead">
-        <b id="modalTitle">TASK</b>
+        <b id="modalTitle" data-lang="mod_task">GÖREV</b>
         <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
           <button class="btn" onclick="quickMove('todo')">ToDo</button>
           <button class="btn primary" onclick="quickMove('doing')">InProg</button>
@@ -713,7 +244,7 @@
       <div class="modalBody">
         <div class="box">
           <div class="bh">
-            <b>Detay</b>
+            <b data-lang="mod_det">Detay</b>
             <span class="mono" id="taskIdMono">#—</span>
           </div>
           <div class="bb">
@@ -752,7 +283,7 @@
 
         <div class="box">
           <div class="bh">
-            <b>Operasyon</b>
+            <b data-lang="mod_ops">Operasyon</b>
             <span class="mono" id="metaMono">—</span>
           </div>
           <div class="bb">
@@ -761,10 +292,24 @@
               <button class="btn" onclick="logEvent('Manual note added')">🧾 Log</button>
             </div>
 
-            <div class="section" style="margin-top:0">
+            <div class="section" style="margin-top:10px">
               <div class="section-head">
-                <b>CheckList</b>
-                <span class="mono" style="color:var(--muted)">optional</span>
+                <b data-lang="mod_quick">Hızlı İlerleme</b>
+                <span class="mono" style="color:var(--txt-muted)">safe</span>
+              </div>
+              <div class="section-body" style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn p0" onclick="setProgress(0)">0%</button>
+                <button class="btn p25" onclick="setProgress(25)">25%</button>
+                <button class="btn p50" onclick="setProgress(50)">50%</button>
+                <button class="btn p75" onclick="setProgress(75)">75%</button>
+                <button class="btn p100" onclick="setProgress(100)">100%</button>
+              </div>
+            </div>
+
+            <div class="section" style="margin-top:10px">
+              <div class="section-head">
+                <b data-lang="mod_checklist">CheckList</b>
+                <span class="mono" style="color:var(--txt-muted)">optional</span>
               </div>
               <div class="section-body">
                 <textarea class="ta" id="t_steps" style="min-height:140px" placeholder="- [ ] ...\n- [ ] ...\n- [ ] ..."></textarea>
@@ -773,25 +318,33 @@
 
             <div class="section" style="margin-top:10px">
               <div class="section-head">
-                <b>Risk / Not</b>
-                <span class="mono" style="color:var(--red)">optional</span>
+                <b data-lang="mod_risk">Risk / Not</b>
+                <span class="mono" style="color:var(--c-red)">optional</span>
               </div>
               <div class="section-body">
                 <textarea class="ta" id="t_risk" style="min-height:110px" placeholder="Bağımlılık / risk / blokaj..."></textarea>
               </div>
             </div>
 
-            <div class="section" style="margin-top:10px">
-              <div class="section-head">
-                <b>Quick Progress</b>
-                <span class="mono" style="color:var(--muted)">safe</span>
+            <!-- DEBUG PROTOCOL (Binary Search Isolation) -->
+            <div class="section" style="margin-top:10px; border-color:rgba(245,158,11,.3); background:rgba(245,158,11,.04)">
+              <div class="section-head" style="background:rgba(245,158,11,.06)">
+                <b style="color:var(--c-amber)" data-lang="mod_debug">🐞 DEBUG PROTOCOL</b>
+                <span class="mono" style="color:var(--c-amber); opacity:.8">Binary Search</span>
               </div>
-              <div class="section-body" style="display:flex; gap:8px; flex-wrap:wrap">
-                <button class="btn" onclick="setProgress(0)">0%</button>
-                <button class="btn" onclick="setProgress(25)">25%</button>
-                <button class="btn" onclick="setProgress(50)">50%</button>
-                <button class="btn" onclick="setProgress(75)">75%</button>
-                <button class="btn good" onclick="setProgress(100)">100%</button>
+              <div class="section-body" style="display:flex; flex-direction:column; gap:8px">
+                <label style="display:flex; gap:8px; align-items:center; cursor:pointer">
+                  <input type="checkbox" id="dbg_1"> <span class="mini" style="color:var(--txt-main)">1. Disable all suspect code (Isolation)</span>
+                </label>
+                <label style="display:flex; gap:8px; align-items:center; cursor:pointer">
+                  <input type="checkbox" id="dbg_2"> <span class="mini" style="color:var(--txt-main)">2. Enable piece by piece (Find break point)</span>
+                </label>
+                <label style="display:flex; gap:8px; align-items:center; cursor:pointer">
+                  <input type="checkbox" id="dbg_3"> <span class="mini" style="color:var(--txt-main)">3. Go inside & repeat (Narrow down)</span>
+                </label>
+                <label style="display:flex; gap:8px; align-items:center; cursor:pointer">
+                  <input type="checkbox" id="dbg_4"> <span class="mini" style="color:var(--txt-main)">4. Find exact line (Root cause)</span>
+                </label>
               </div>
             </div>
 
@@ -802,727 +355,10 @@
     </div>
   </div>
 
+  <!-- OFFLINE WARNING -->
+  <div id="offlineBadge" class="offline-badge" style="display:none">📡 OFFLINE MODE</div>
 
-<script>
-  const STORAGE_KEY = "ko_remaster_command_center_v4_1";
-
-  function seedTaskExact(line, subsystem, priority, status, progress, owner, noteExtra=""){
-    const now = Date.now();
-    return {
-      id: now + Math.floor(Math.random()*9999),
-      title: line.trim(),
-      subsystem,
-      priority,
-      status,
-      progress: clamp(progress,0,100),
-      owner,
-      problem: line.trim() + (noteExtra ? ("\n\nNOT:\n" + noteExtra) : ""),
-      hypothesis: "",
-      solution: "",
-      doneCriteria: "",
-      steps: "",
-      risk: "",
-      createdAt: now,
-      updatedAt: now,
-      doneAt: status === "done" ? now : null
-    };
-  }
-
-  const DEFAULT_STATE = () => ({
-    meta: { createdAt: Date.now(), version: "v4.1", project: "KO Remaster" },
-    notes: { eren: "", tayfun: "" },
-    tasks: [
-      // Kullanıcının yazdığı maddeler (seed):
-      seedTaskExact(
-        "Test (orjinal)(warrior barbarian olması gerekiyor) karakteri yerine başka bir karakter yükleniyor (+ bütün moblar aynı karakter olarak algılanıyor, örneğin Guard).",
-        "Entity", "blocker", "todo", 15, "Server"
-      ),
-      seedTaskExact(
-        "Alt+F4 tuşlarına basınca oyundan çıkış (Exit UI) kontrolü.",
-        "UI", "high", "todo", 0, "Client",
-        "Bu madde listede 2 kez vardı; tek task açıp burada birleştirdim."
-      ),
-      seedTaskExact(
-        "Mouse tıklandığında karakter tıklanılan yere doğru yönelecek.",
-        "Input", "high", "doing", 40, "Client"
-      ),
-      seedTaskExact(
-        "Sunucuya 'enter enter' yaparak giriş akışının düzenlenmesi.",
-        "Login", "high", "todo", 10, "Client"
-      ),
-      seedTaskExact(
-        "karekterin Kendı clonunu bırakması. (aslında butun moblar aynı karekter (testing ile))",
-        "Entity", "blocker", "todo", 5, "Server"
-      ),
-      seedTaskExact(
-        "Otomatik giriş ve 'Beni Hatırla' (Remember Me) özelliği eklenmesi.",
-        "Login", "normal", "todo", 0, "Client"
-      ),
-      seedTaskExact(
-        "Mouse imleci tıklandığında (Dosyası Drive image içinde).",
-        "UI", "normal", "todo", 0, "Client"
-      ),
-      seedTaskExact(
-        "mause tıkladıgında karekter tıklanılan yere dogru yonelecek AMA ! mause basılı tutarsa karekter sureklı mause yı takip edecek",
-        "Input", "high", "todo", 0, "Client"
-      )
-    ],
-    events: [{ at: Date.now(), msg: "Sistem kuruldu (v4.1). Kullanıcı task listesi seed edildi." }]
-  });
-
-  let state = DEFAULT_STATE();
-  let currentTaskId = null;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    load();
-    bindUI();
-    tickClock();
-    setInterval(tickClock, 1000);
-    renderAll();
-  });
-
-  function bindUI(){
-    const nE = document.getElementById("noteErencan");
-    const nT = document.getElementById("noteTayfun");
-
-    nE.addEventListener("input", () => { state.notes.eren = nE.value; autoSave(); });
-    nT.addEventListener("input", () => { state.notes.tayfun = nT.value; autoSave(); });
-
-    document.getElementById("q").addEventListener("input", renderBoard);
-    document.getElementById("fSubsystem").addEventListener("change", renderBoard);
-    document.getElementById("fPriority").addEventListener("change", renderBoard);
-    document.getElementById("fOwner").addEventListener("change", renderBoard);
-    document.getElementById("sortBy").addEventListener("change", renderBoard);
-
-    const imp = document.getElementById("importFile");
-    imp.addEventListener("change", async (e) => {
-      const file = e.target.files?.[0];
-      if(!file) return;
-      try{
-        const txt = await file.text();
-        const data = JSON.parse(txt);
-        if(!data || !data.tasks) throw new Error("Geçersiz JSON");
-        state = migrate(data);
-        logEvent("JSON import alındı");
-        save();
-        renderAll();
-        alert("✅ Import tamam.");
-      }catch(err){
-        alert("❌ Import hata: " + err.message);
-      }finally{
-        imp.value = "";
-      }
-    });
-  }
-
-  function tickClock(){
-    document.getElementById("nowTime").innerText = new Date().toLocaleString();
-  }
-
-  function migrate(data){
-    const s = {
-      meta: data.meta || { createdAt: Date.now(), version:"v4.1", project:"KO Remaster" },
-      notes: data.notes || { eren:"", tayfun:"" },
-      tasks: Array.isArray(data.tasks) ? data.tasks.map(t => ({
-        id: t.id ?? (Date.now()+Math.floor(Math.random()*9999)),
-        title: t.title ?? t.text ?? "Untitled",
-        subsystem: t.subsystem ?? "General",
-        priority: t.priority ?? "normal",
-        status: t.status ?? "todo",
-        progress: clamp(Number(t.progress ?? 0),0,100),
-        owner: t.owner ?? "Eren",
-        problem: t.problem ?? "",
-        hypothesis: t.hypothesis ?? "",
-        solution: t.solution ?? "",
-        doneCriteria: t.doneCriteria ?? "",
-        steps: t.steps ?? "",
-        risk: t.risk ?? "",
-        createdAt: t.createdAt ?? Date.now(),
-        updatedAt: t.updatedAt ?? Date.now(),
-        doneAt: t.doneAt ?? null
-      })) : [],
-      events: Array.isArray(data.events) ? data.events : []
-    };
-    s.tasks.forEach(t=>{
-      if(t.status==="done"){ t.progress = 100; t.doneAt = t.doneAt ?? Date.now(); }
-      if(t.progress===100 && t.status!=="done"){ t.status="done"; t.doneAt = t.doneAt ?? Date.now(); }
-    });
-    return s;
-  }
-
-  function load(){
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      try{ state = migrate(JSON.parse(raw)); }
-      catch{ state = DEFAULT_STATE(); }
-    }else{
-      state = DEFAULT_STATE();
-    }
-    document.getElementById("noteErencan").value = state.notes.eren || "";
-    document.getElementById("noteTayfun").value = state.notes.tayfun || "";
-    updateTopStatus("Loaded");
-  }
-
-  function save(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state, null, 2));
-  }
-
-  
-  // ---- AUTOSAVE (local + Supabase) ----
-  let _supaSyncTimer = null;
-  let _supaSyncInFlight = false;
-
-  function _taskToRow(t){
-    return {
-      id: t.id,
-      title: t.title ?? "",
-      subsystem: t.subsystem ?? "",
-      priority: t.priority ?? "high",
-      status: t.status ?? "active",
-      progress: Number.isFinite(+t.progress) ? +t.progress : 0,
-      owner: t.owner ?? "",
-
-      problem: t.problem ?? "",
-      hypothesis: t.hypothesis ?? "",
-      solution: t.solution ?? "",
-      done_criteria: t.doneCriteria ?? "",
-      steps: t.steps ?? "",
-      risk: t.risk ?? "",
-
-      updated_at: new Date(t.updatedAt || Date.now()).toISOString(),
-      done_at: (t.status === "done") ? new Date(t.doneAt || Date.now()).toISOString() : null
-    };
-  }
-
-  async function syncSupabase(reason="Sync"){
-    if(!window.sb){
-      // Supabase henüz yüklenmediyse sessizce geç.
-      return;
-    }
-    if(_supaSyncInFlight) return;
-    _supaSyncInFlight = true;
-
-    try{
-      const rows = (state.tasks || []).map(_taskToRow);
-
-      // Toplu upsert (tek request)
-      const { error } = await window.sb
-        .from("tasks")
-        .upsert(rows, { onConflict: "id" });
-
-      if(error){
-        console.error("Supabase sync error:", error);
-        updateTopStatus("Supabase ❌ (console)");
-      }else{
-        updateTopStatus(reason + " → Supabase ✅");
-      }
-    }catch(e){
-      console.error("Supabase sync crash:", e);
-      updateTopStatus("Supabase ❌ (crash)");
-    }finally{
-      _supaSyncInFlight = false;
-      refreshHealth();
-    }
-  }
-
-  function autoSave(){
-    state.meta.lastSavedAt = Date.now();
-    save(); // localStorage
-    updateTopStatus("AutoSave (local)");
-    refreshHealth();
-
-    // Supabase'e spam atmamak için debounce
-    clearTimeout(_supaSyncTimer);
-    _supaSyncTimer = setTimeout(()=>syncSupabase("AutoSave"), 700);
-  }
-
-
-  
-  async function manualSave(){
-    state.meta.lastSavedAt = Date.now();
-    save(); // local
-    updateTopStatus("Manual Save (local) ✅");
-
-    await syncSupabase("Manual Save");
-    alert("✅ Kaydedildi (local + Supabase).");
-  }
-
-
-  function updateTopStatus(mode){
-    const t = new Date(state.meta.lastSavedAt || Date.now()).toLocaleTimeString();
-    document.getElementById("sSave").innerText = (state.meta.lastSavedAt ? t : "—");
-    document.getElementById("statusText").innerText = `${mode} · ${new Date().toLocaleTimeString()}`;
-  }
-
-  function downloadBackup(){
-    const dataStr = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-    const a = document.createElement("a");
-    a.href = dataStr;
-    a.download = "KO_Remaster_CommandCenter_v4_1_Backup.json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    logEvent("JSON yedek indirildi");
-  }
-
-  function triggerImport(){ document.getElementById("importFile").click(); }
-
-  function hardReset(){
-    if(!confirm("Her şeyi sıfırlayacağım. Emin misin?")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    state = DEFAULT_STATE();
-    save();
-    renderAll();
-    alert("🧨 Sıfırlandı.");
-  }
-
-  function renderAll(){
-    renderFilters();
-    renderBoard();
-    recalc();
-    renderEvents();
-    refreshHealth();
-  }
-
-  function renderFilters(){
-    const subs = new Set(state.tasks.map(t => (t.subsystem||"General").trim()).filter(Boolean));
-    const sel = document.getElementById("fSubsystem");
-    const current = sel.value;
-    sel.innerHTML = `<option value="">(Hepsi)</option>` + [...subs].sort().map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
-    sel.value = subs.has(current) ? current : "";
-  }
-
-  function renderBoard(){
-    const q = (document.getElementById("q").value || "").toLowerCase().trim();
-    const fSub = document.getElementById("fSubsystem").value;
-    const fPr = document.getElementById("fPriority").value;
-    const fOw = document.getElementById("fOwner").value;
-    const sort = document.getElementById("sortBy").value;
-
-    let tasks = [...state.tasks];
-
-    tasks = tasks.filter(t=>{
-      if(fSub && t.subsystem !== fSub) return false;
-      if(fPr && t.priority !== fPr) return false;
-      if(fOw && t.owner !== fOw) return false;
-      if(q){
-        const blob = [
-          t.id, t.title, t.subsystem, t.owner, t.priority, t.status,
-          t.problem, t.hypothesis, t.solution, t.doneCriteria, t.steps, t.risk
-        ].join(" ").toLowerCase();
-        if(!blob.includes(q)) return false;
-      }
-      return true;
-    });
-
-    tasks.sort((a,b)=>{
-      if(sort==="updated") return (b.updatedAt||0) - (a.updatedAt||0);
-      if(sort==="created") return (b.createdAt||0) - (a.createdAt||0);
-      if(sort==="progress") return (b.progress||0) - (a.progress||0);
-      return prioScore(b.priority) - prioScore(a.priority);
-    });
-
-    const todo = tasks.filter(t=>t.status==="todo");
-    const doing = tasks.filter(t=>t.status==="doing");
-    const done = tasks.filter(t=>t.status==="done");
-
-    renderCol("todo", todo);
-    renderCol("doing", doing);
-    renderCol("done", done);
-
-    document.getElementById("cTodo").innerText = todo.length;
-    document.getElementById("cDoing").innerText = doing.length;
-    document.getElementById("cDone").innerText = done.length;
-
-    const active = state.tasks.filter(t=>t.status!=="done").length;
-    document.getElementById("activeInfo").innerText = `${active} active · ${state.tasks.length} total`;
-
-    // TOP STATUS METRICS
-    const doneCount = state.tasks.filter(t=>t.status==="done").length;
-    const critOpen = state.tasks.filter(t=>t.priority==="blocker" && t.status!=="done").length;
-
-    document.getElementById("sActive").innerText = active;
-    document.getElementById("sDone").innerText = doneCount;
-    document.getElementById("sCrit").innerText = critOpen;
-
-    document.getElementById("activeCount").innerText = active;
-    document.getElementById("totalCount").innerText = state.tasks.length;
-  }
-
-  function renderCol(id, arr){
-    const el = document.getElementById(id);
-    el.innerHTML = "";
-    arr.forEach(t=>{
-      const badge = t.priority === "blocker" ? "blocker" : (t.priority==="high" ? "high" : "normal");
-      const doneTag = (t.status==="done") ? `<span class="tag done">DONE</span>` : "";
-      const subs = t.subsystem ? `<span class="tag subsys">${escapeHtml(t.subsystem)}</span>` : "";
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.onclick = () => openTask(t.id);
-
-      card.innerHTML = `
-        <div class="card-top">
-          <div style="display:flex; flex-direction:column; gap:6px; min-width:0; flex:1;">
-            <div class="card-title">${escapeHtml(t.title || "Untitled")}</div>
-            <div class="tagrow">
-              <span class="tag ${badge}">${t.priority.toUpperCase()}</span>
-              ${subs}
-              ${doneTag}
-              <span class="tag" style="border-color:rgba(255,255,255,.18); color:rgba(255,255,255,.78); background:rgba(255,255,255,.06)">${escapeHtml(t.owner||"—")}</span>
-              <span class="tag" style="border-color:rgba(255,255,255,.18); color:rgba(255,255,255,.78); background:rgba(255,255,255,.06)">#${t.id}</span>
-            </div>
-          </div>
-          <div style="text-align:right; display:flex; flex-direction:column; gap:6px;">
-            <div class="mono" style="color:var(--muted); font-size:12px">${(t.progress??0)}%</div>
-            <button class="btn" style="padding:6px 8px; border-radius:10px" onclick="event.stopPropagation(); quickBump(${t.id})">＋10</button>
-          </div>
-        </div>
-
-        <div class="bar"><i style="width:${clamp(t.progress||0,0,100)}%"></i></div>
-        <div class="mini">${escapeHtml(shorten(t.problem || "", 140))}</div>
-      `;
-
-      el.appendChild(card);
-    });
-  }
-
-  function quickBump(id){
-    const t = state.tasks.find(x=>x.id===id);
-    if(!t) return;
-    t.progress = clamp((t.progress||0)+10,0,100);
-    if(t.progress===100){ t.status="done"; t.doneAt = Date.now(); }
-    t.updatedAt = Date.now();
-    logEvent(`Progress: #${id} -> ${t.progress}%`);
-    autoSave();
-    renderAll();
-  }
-
-  function recalc(){
-    const total = state.tasks.length || 1;
-    const avg = Math.round(state.tasks.reduce((s,t)=>s+(Number(t.progress)||0),0)/total);
-    document.getElementById("overallPct").innerText = avg + "%";
-
-    const done = state.tasks.filter(t=>t.status==="done").length;
-    const blockers = state.tasks.filter(t=>t.priority==="blocker" && t.status!=="done").length;
-    document.getElementById("critCount").innerText = blockers;
-
-    document.getElementById("blockerHint").innerText =
-      blockers ? `${blockers} açık CRITICAL var` : "CRITICAL yok";
-
-    document.getElementById("overallHint").innerText =
-      blockers ? "Önce CRITICAL temizle → sonra polish" : "Akış stabil";
-
-    const donePct = Math.round((done/(state.tasks.length||1))*100);
-    document.getElementById("donutVal").innerText = donePct + "%";
-    const deg = Math.round((donePct/100)*360);
-    document.getElementById("donut").style.background =
-      `conic-gradient(var(--green) ${deg}deg, rgba(255,255,255,.08) 0deg)`;
-
-    document.getElementById("lNormal").innerText = state.tasks.filter(t=>t.priority==="normal").length;
-    document.getElementById("lHigh").innerText   = state.tasks.filter(t=>t.priority==="high").length;
-    document.getElementById("lCrit").innerText   = state.tasks.filter(t=>t.priority==="blocker").length;
-    document.getElementById("lDone").innerText   = done;
-
-    const wrap = document.getElementById("subsysBars");
-    const by = {};
-    state.tasks.forEach(t=>{
-      const k = (t.subsystem||"General").trim();
-      if(!by[k]) by[k] = { sum:0, count:0 };
-      by[k].sum += Number(t.progress)||0;
-      by[k].count++;
-    });
-    wrap.innerHTML = Object.keys(by).sort().map(k=>{
-      const pct = Math.round(by[k].sum / (by[k].count||1));
-      return `
-        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px">
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
-            <div class="mono" style="color:rgba(255,255,255,.85); font-size:12px">${escapeHtml(k)}</div>
-            <div class="mono" style="color:var(--muted); font-size:12px">${pct}%</div>
-          </div>
-          <div class="bar"><i style="width:${pct}%"></i></div>
-        </div>
-      `;
-    }).join("");
-
-    const weekAgo = Date.now() - 7*24*60*60*1000;
-    const v = state.tasks.filter(t=>t.doneAt && t.doneAt >= weekAgo).length;
-    document.getElementById("velocity").innerText = v + " / 7d";
-
-    refreshHealth();
-    renderEvents();
-  }
-
-  function refreshHealth(){
-    const openBlockers = state.tasks.filter(t=>t.priority==="blocker" && t.status!=="done").length;
-    const openDoing = state.tasks.filter(t=>t.status==="doing").length;
-
-    const dot = document.getElementById("healthDot");
-    const label = document.getElementById("healthLabel");
-    const detail = document.getElementById("healthDetail");
-
-    if(openBlockers){
-      dot.className = "dot red";
-      label.innerText = "RISK";
-      detail.innerText = `· ${openBlockers} CRITICAL açık`;
-    }else if(openDoing > 0){
-      dot.className = "dot amber";
-      label.innerText = "WORKING";
-      detail.innerText = `· ${openDoing} task üzerinde çalışılıyor`;
-    }else{
-      dot.className = "dot";
-      label.innerText = "STABLE";
-      detail.innerText = "· blokaj yok";
-    }
-  }
-
-  function renderEvents(){
-    const list = document.getElementById("events");
-    list.innerHTML = "";
-    const arr = [...(state.events||[])].slice(-40).reverse();
-    arr.forEach(e=>{
-      const row = document.createElement("div");
-      row.className = "ev";
-      row.innerHTML = `
-        <div class="ball"></div>
-        <div style="display:flex; flex-direction:column; gap:2px">
-          <div class="txt"><b>${escapeHtml(e.msg || "")}</b></div>
-          <div class="when">${new Date(e.at).toLocaleString()}</div>
-        </div>
-      `;
-      list.appendChild(row);
-    });
-    document.getElementById("logCount").innerText = `${(state.events||[]).length} event`;
-  }
-
-  function logEvent(msg){
-    state.events = state.events || [];
-    state.events.push({ at: Date.now(), msg });
-    if(state.events.length > 300) state.events = state.events.slice(-300);
-    autoSave();
-  }
-
-  // ===== MODAL =====
-  function openTask(id){
-    const t = state.tasks.find(x=>x.id===id);
-    if(!t) return;
-    currentTaskId = id;
-
-    document.getElementById("modalBack").style.display = "flex";
-    document.getElementById("modalTitle").innerText = `TASK DETAIL`;
-    document.getElementById("taskIdMono").innerText = `#${t.id}`;
-    document.getElementById("metaMono").innerText = `created: ${new Date(t.createdAt).toLocaleDateString()} · updated: ${new Date(t.updatedAt).toLocaleString()}`;
-
-    setVal("t_title", t.title);
-    setVal("t_priority", t.priority);
-    setVal("t_status", t.status);
-    setVal("t_progress", t.progress);
-    setVal("t_subsystem", t.subsystem);
-    setVal("t_owner", t.owner);
-
-    setVal("t_problem", t.problem);
-    setVal("t_hypothesis", t.hypothesis);
-    setVal("t_solution", t.solution);
-    setVal("t_done", t.doneCriteria);
-    setVal("t_steps", t.steps);
-    setVal("t_risk", t.risk);
-  }
-
-  function closeModal(ev){
-    if(ev && ev.target && ev.target.id !== "modalBack") return;
-    document.getElementById("modalBack").style.display = "none";
-    currentTaskId = null;
-  }
-
-  function openCreate(){
-    const now = Date.now();
-    const t = {
-      id: now + Math.floor(Math.random()*9999),
-      title: "Yeni Task",
-      subsystem: "General",
-      priority: "normal",
-      status: "todo",
-      progress: 0,
-      owner: "Eren",
-      problem: "",
-      hypothesis: "",
-      solution: "",
-      doneCriteria: "",
-      steps: "",
-      risk: "",
-      createdAt: now,
-      updatedAt: now,
-      doneAt: null
-    };
-    state.tasks.unshift(t);
-    logEvent(`Task created: #${t.id}`);
-    save();
-    renderAll();
-    openTask(t.id);
-  }
-
-  function saveModal(){
-    if(!currentTaskId) return;
-    const t = state.tasks.find(x=>x.id===currentTaskId);
-    if(!t) return;
-
-    t.title = getVal("t_title").trim() || "Untitled";
-    t.priority = getVal("t_priority");
-    t.status = getVal("t_status");
-    t.progress = clamp(Number(getVal("t_progress") || 0), 0, 100);
-    t.subsystem = getVal("t_subsystem").trim() || "General";
-    t.owner = getVal("t_owner");
-
-    t.problem = getVal("t_problem");
-    t.hypothesis = getVal("t_hypothesis");
-    t.solution = getVal("t_solution");
-    t.doneCriteria = getVal("t_done");
-    t.steps = getVal("t_steps");
-    t.risk = getVal("t_risk");
-
-    if(t.status === "done"){ t.progress = 100; t.doneAt = t.doneAt || Date.now(); }
-    if(t.progress === 100 && t.status !== "done"){ t.status = "done"; t.doneAt = t.doneAt || Date.now(); }
-
-    t.updatedAt = Date.now();
-
-    logEvent(`Task saved: #${t.id}`);
-    autoSave();
-    renderAll();
-    alert("✅ Task kaydedildi.");
-  }
-
-  function deleteCurrent(){
-    if(!currentTaskId) return;
-    const t = state.tasks.find(x=>x.id===currentTaskId);
-    if(!t) return;
-    if(!confirm(`#${t.id} silinsin mi?`)) return;
-
-    state.tasks = state.tasks.filter(x=>x.id!==currentTaskId);
-    logEvent(`Task deleted: #${t.id}`);
-    autoSave();
-    closeModal();
-    renderAll();
-  }
-
-  function quickMove(status){
-    if(!currentTaskId) return;
-    const t = state.tasks.find(x=>x.id===currentTaskId);
-    if(!t) return;
-    t.status = status;
-    if(status==="done"){ t.progress = 100; t.doneAt = t.doneAt || Date.now(); }
-    t.updatedAt = Date.now();
-    logEvent(`Status: #${t.id} -> ${status}`);
-    autoSave();
-    renderAll();
-    openTask(t.id);
-  }
-
-  function setProgress(p){
-    document.getElementById("t_progress").value = clamp(p,0,100);
-    if(p===100) document.getElementById("t_status").value = "done";
-  }
-
-  function setVal(id, v){ document.getElementById(id).value = (v ?? ""); }
-  function getVal(id){ return document.getElementById(id).value ?? ""; }
-
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-  function prioScore(p){ return p==="blocker" ? 3 : (p==="high" ? 2 : 1); }
-
-  function shorten(s, n){
-    s = (s||"").replace(/\s+/g," ").trim();
-    if(s.length<=n) return s;
-    return s.slice(0, n-1) + "…";
-  }
-  function escapeHtml(str){
-    return String(str ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-</script> <!-- ANA APP SCRIPT BURADA KAPANIR -->
-
-
-<!-- SUPABASE (primary + fallback loader) -->
-<script>
-(function(){
-  const SUPABASE_URL = "https://pbvzwfgzjrgwiodoqcqw.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBidnp3Zmd6anJnd2lvZG9xY3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNjYyODIsImV4cCI6MjA4Mzc0MjI4Mn0.-DvpXkjIaz8tm7TZhaTN1edJB4oDZfV9ZYUTcEplIOA"; // anon public key (client-side OK)
-
-  function loadScript(src){
-    return new Promise((resolve, reject)=>{
-      const s = document.createElement("script");
-      s.src = src;
-      s.defer = true;
-      s.onload = ()=>resolve();
-      s.onerror = ()=>reject(new Error("Failed to load: " + src));
-      document.head.appendChild(s);
-    });
-  }
-
-  async function boot(){
-    try {
-      await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js");
-    } catch (e1) {
-      console.warn("jsDelivr blocked, trying unpkg…", e1);
-      await loadScript("https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js");
-    }
-
-    if(!window.supabase){
-      console.error("Supabase library not available.");
-      return;
-    }
-
-    window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    window.__sbReady = true;
-
-    // İlk bağlantı test + opsiyonel remote load
-    try {
-      const { data, error } = await window.sb.from("tasks").select("*").limit(200);
-      if(error) {
-        console.error("Supabase test error:", error);
-        updateTopStatus("Supabase ❌ (RLS / Key?)");
-        return;
-      }
-
-      // Local boşsa remote'u çekelim (local doluysa dokunmuyoruz)
-      if(Array.isArray(data) && data.length && (!state.tasks || state.tasks.length===0)) {
-        state.tasks = data.map(r=>({
-          id: r.id,
-          title: r.title ?? "",
-          subsystem: r.subsystem ?? "",
-          priority: r.priority ?? "high",
-          status: r.status ?? "active",
-          progress: r.progress ?? 0,
-          owner: r.owner ?? "",
-
-          problem: r.problem ?? "",
-          hypothesis: r.hypothesis ?? "",
-          solution: r.solution ?? "",
-          doneCriteria: r.done_criteria ?? "",
-          steps: r.steps ?? "",
-          risk: r.risk ?? "",
-
-          updatedAt: r.updated_at ? Date.parse(r.updated_at) : Date.now(),
-          doneAt: r.done_at ? Date.parse(r.done_at) : null
-        }));
-        save();
-        renderAll();
-      }
-
-      updateTopStatus("Supabase ✅ Connected");
-      refreshHealth();
-    } catch(e) {
-      console.error("Supabase boot crash:", e);
-      updateTopStatus("Supabase ❌ (boot)");
-    }
-  }
-
-  boot();
-})();
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
